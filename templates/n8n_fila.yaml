@@ -1,7 +1,7 @@
 metadata:
-  name: N8n_fila
+  name: n8n modo fila
   icon: n8n.png
-  description: Plantilla para N8n_fila
+  description: Plantilla para n8n modo fila
   version: 1.0.0
   category: General
   dependencies:
