@@ -1,5 +1,6 @@
 metadata:
   name: Pgvector
+  icon: postgres.png
   description: Plantilla para Pgvector
   version: 1.0.0
   category: General
