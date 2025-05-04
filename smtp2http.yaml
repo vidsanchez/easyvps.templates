@@ -1,0 +1,61 @@
+metadata:
+  name: Smtp2http
+  description: Plantilla para Smtp2http
+  version: 1.0.0
+  category: General
+  dependencies: []
+  required_networks:
+  - network_public
+  user_fields:
+  - field: username
+    label: Username
+    type: string
+    required: true
+    default: ''
+    description: Configuración para username
+    validation:
+      pattern: null
+      min_length: null
+      max_length: null
+  - field: password
+    label: Password
+    type: password
+    required: true
+    default: ''
+    description: Configuración para password
+    validation:
+      pattern: null
+      min_length: 8
+      max_length: 100
+  - field: subdominio
+    label: Subdominio
+    type: string
+    required: true
+    default: ''
+    description: Configuración para subdominio
+    validation:
+      pattern: ^[a-z0-9-]+$
+      min_length: null
+      max_length: null
+  tags:
+  - smtp2http
+template:
+  version: '3.7'
+  services:
+    smtp2http:
+      image: luizeof/smtp2http:latest
+      entrypoint:
+      - smtp2http
+      - --user=[[username]]
+      - --pass=[[password]]
+      - --webhook=[[subdominio]]
+      networks:
+      - network_public
+      deploy:
+        placement:
+          constraints:
+          - node.role == manager
+  networks:
+    network_public:
+      external: true
+      name: network_public

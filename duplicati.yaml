@@ -1,0 +1,51 @@
+metadata:
+  name: Duplicati
+  description: Plantilla para Duplicati
+  version: 1.0.0
+  category: General
+  dependencies: []
+  required_networks:
+  - network_public
+  user_fields:
+  - field: timezone
+    label: Timezone
+    type: string
+    required: true
+    default: ''
+    description: Configuración para timezone
+    validation:
+      pattern: null
+      min_length: null
+      max_length: null
+  - field: subdominio
+    label: Subdominio
+    type: string
+    required: true
+    default: ''
+    description: Configuración para subdominio
+    validation:
+      pattern: ^[a-z0-9-]+$
+      min_length: null
+      max_length: null
+  tags:
+  - duplicati
+template:
+  version: '3.7'
+  services:
+    duplicati:
+      image: luizeof/smtp2http:latest
+      entrypoint:
+      - smtp2http
+      - --user=[[username]]
+      - --pass=[[password]]
+      - --webhook=[[subdominio]]
+      networks:
+      - network_public
+      deploy:
+        placement:
+          constraints:
+          - node.role == manager
+  networks:
+    network_public:
+      external: true
+      name: network_public

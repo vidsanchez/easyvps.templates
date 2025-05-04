@@ -1,0 +1,62 @@
+metadata:
+  name: Mongo_express
+  description: Plantilla para Mongo_express
+  version: 1.0.0
+  category: General
+  dependencies:
+  - MongoDB
+  required_networks:
+  - network_public
+  user_fields:
+  - field: username
+    label: Username
+    type: string
+    required: true
+    default: ''
+    description: Configuración para username
+    validation:
+      pattern: null
+      min_length: null
+      max_length: null
+  - field: password
+    label: Password
+    type: password
+    required: true
+    default: ''
+    description: Configuración para password
+    validation:
+      pattern: null
+      min_length: 8
+      max_length: 100
+  - field: subdominio
+    label: Subdominio
+    type: string
+    required: true
+    default: ''
+    description: Configuración para subdominio
+    validation:
+      pattern: ^[a-z0-9-]+$
+      min_length: null
+      max_length: null
+  tags:
+  - mongo_express
+template:
+  version: '3.7'
+  services:
+    mongo_express:
+      image: luizeof/smtp2http:latest
+      entrypoint:
+      - smtp2http
+      - --user=[[username]]
+      - --pass=[[password]]
+      - --webhook=[[subdominio]]
+      networks:
+      - network_public
+      deploy:
+        placement:
+          constraints:
+          - node.role == manager
+  networks:
+    network_public:
+      external: true
+      name: network_public

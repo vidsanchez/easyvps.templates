@@ -1,0 +1,73 @@
+metadata:
+  name: N8n_fila
+  description: Plantilla para N8n_fila
+  version: 1.0.0
+  category: General
+  dependencies:
+  - Postgres
+  - Redis
+  required_networks:
+  - network_public
+  user_fields:
+  - field: password
+    label: Password
+    type: password
+    required: true
+    default: ''
+    description: Configuración para password
+    validation:
+      pattern: null
+      min_length: 8
+      max_length: 100
+  - field: subdominio_editor
+    label: Subdominio_editor
+    type: string
+    required: true
+    default: ''
+    description: Configuración para subdominio_editor
+    validation:
+      pattern: null
+      min_length: null
+      max_length: null
+  - field: subdominio_webhook
+    label: Subdominio_webhook
+    type: string
+    required: true
+    default: ''
+    description: Configuración para subdominio_webhook
+    validation:
+      pattern: null
+      min_length: null
+      max_length: null
+  - field: timezone
+    label: Timezone
+    type: string
+    required: true
+    default: ''
+    description: Configuración para timezone
+    validation:
+      pattern: null
+      min_length: null
+      max_length: null
+  tags:
+  - n8n_fila
+template:
+  version: '3.7'
+  services:
+    n8n_fila:
+      image: luizeof/smtp2http:latest
+      entrypoint:
+      - smtp2http
+      - --user=[[username]]
+      - --pass=[[password]]
+      - --webhook=[[subdominio]]
+      networks:
+      - network_public
+      deploy:
+        placement:
+          constraints:
+          - node.role == manager
+  networks:
+    network_public:
+      external: true
+      name: network_public

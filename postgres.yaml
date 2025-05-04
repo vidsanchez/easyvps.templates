@@ -1,0 +1,41 @@
+metadata:
+  name: Postgres
+  description: Plantilla para Postgres
+  version: 1.0.0
+  category: General
+  dependencies: []
+  required_networks:
+  - network_public
+  user_fields:
+  - field: password
+    label: Password
+    type: password
+    required: true
+    default: ''
+    description: Configuración para password
+    validation:
+      pattern: null
+      min_length: 8
+      max_length: 100
+  tags:
+  - postgres
+template:
+  version: '3.7'
+  services:
+    postgres:
+      image: luizeof/smtp2http:latest
+      entrypoint:
+      - smtp2http
+      - --user=[[username]]
+      - --pass=[[password]]
+      - --webhook=[[subdominio]]
+      networks:
+      - network_public
+      deploy:
+        placement:
+          constraints:
+          - node.role == manager
+  networks:
+    network_public:
+      external: true
+      name: network_public

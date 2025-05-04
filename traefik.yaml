@@ -1,0 +1,41 @@
+metadata:
+  name: Traefik
+  description: Plantilla para Traefik
+  version: 1.0.0
+  category: General
+  dependencies: []
+  required_networks:
+  - network_public
+  user_fields:
+  - field: email
+    label: Email
+    type: string
+    required: true
+    default: ''
+    description: Configuración para email
+    validation:
+      pattern: null
+      min_length: null
+      max_length: null
+  tags:
+  - traefik
+template:
+  version: '3.7'
+  services:
+    traefik:
+      image: luizeof/smtp2http:latest
+      entrypoint:
+      - smtp2http
+      - --user=[[username]]
+      - --pass=[[password]]
+      - --webhook=[[subdominio]]
+      networks:
+      - network_public
+      deploy:
+        placement:
+          constraints:
+          - node.role == manager
+  networks:
+    network_public:
+      external: true
+      name: network_public

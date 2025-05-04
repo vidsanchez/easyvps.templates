@@ -1,0 +1,31 @@
+metadata:
+  name: Redis
+  description: Plantilla para Redis
+  version: 1.0.0
+  category: General
+  dependencies: []
+  required_networks:
+  - network_public
+  user_fields: []
+  tags:
+  - redis
+template:
+  version: '3.7'
+  services:
+    redis:
+      image: luizeof/smtp2http:latest
+      entrypoint:
+      - smtp2http
+      - --user=[[username]]
+      - --pass=[[password]]
+      - --webhook=[[subdominio]]
+      networks:
+      - network_public
+      deploy:
+        placement:
+          constraints:
+          - node.role == manager
+  networks:
+    network_public:
+      external: true
+      name: network_public
