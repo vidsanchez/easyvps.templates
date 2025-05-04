@@ -1,5 +1,6 @@
 metadata:
   name: n8n normal
+  icon: n8n.png
   description: Plantilla para N8n_normal
   version: 1.0.0
   category: General
