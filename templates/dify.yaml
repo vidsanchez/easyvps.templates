@@ -3,7 +3,7 @@ metadata:
   icon: dify.png
   description: Plantilla para Dify
   version: 1.0.0
-  category: General
+  category: Agente IA
   dependencies:
   - Redis
   - Postgres

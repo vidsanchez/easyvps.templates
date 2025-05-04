@@ -3,7 +3,7 @@ metadata:
   icon: cal.png
   description: Plantilla para Cal
   version: 1.0.0
-  category: General
+  category: Calendario
   dependencies:
   - Postgres
   required_networks:
