@@ -1,5 +1,6 @@
 metadata:
   name: Baserow
+  icon: baserow.svg
   description: Aquí vamos a poner un servidor de Baserow
   version: 1.0.0
   category: Base de datos

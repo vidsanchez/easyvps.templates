@@ -1,5 +1,6 @@
 metadata:
   name: Chatwoot
+  icon: chatwoot.svg
   description: Plantilla para Chatwoot
   version: 1.0.0
   category: General

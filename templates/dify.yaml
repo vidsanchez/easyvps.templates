@@ -1,5 +1,6 @@
 metadata:
   name: Dify
+  icon: dify.png
   description: Plantilla para Dify
   version: 1.0.0
   category: General

@@ -1,5 +1,6 @@
 metadata:
   name: Botpress
+  icon: botpress.png
   description: Plantilla para Botpress
   version: 1.0.0
   category: General
