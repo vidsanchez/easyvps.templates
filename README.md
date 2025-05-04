@@ -1,1 +1,3 @@
-# Aquí todos los templates de easyvps
+# easyvps
+
+Este repositorio contiene los templates para Portainer que se utilizan en EasyVPs
