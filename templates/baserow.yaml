@@ -1,8 +1,8 @@
 metadata:
   name: Baserow
-  description: Plantilla para Baserow
+  description: Aquí vamos a poner un servidor de Baserow
   version: 1.0.0
-  category: General
+  category: Base de datos
   dependencies:
   - Postgres
   required_networks:
