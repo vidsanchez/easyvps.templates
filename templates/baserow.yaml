@@ -1,24 +1,24 @@
 metadata:
   name: Baserow
   icon: baserow.svg
-  description: Aquí vamos a poner un servidor de Baserow
-  version: 1.0.0
+  description: Baserow es una herramienta de base de datos sin código, de código abierto, que permite crear y gestionar bases de datos en línea de forma sencilla y colaborativa. Es flexible, integrable con otros programas y ofrece planes gratuitos y de pago según las necesidades del usuario.
+  version: 0.1.0
   category: Base de datos
   dependencies:
   - Postgres
   required_networks:
   - network_public
   user_fields:
-  - field: subdominio
-    label: Subdominio
+  - field: username
+    label: Usuario
     type: string
     required: true
     default: ''
-    description: Configuración para subdominio
+    description: El nombre de usuario
     validation:
-      pattern: ^[a-z0-9-]+$
-      min_length: null
-      max_length: null
+      pattern: null
+      min_length: 8
+      max_length: 100
   - field: password
     label: Password
     type: password
@@ -29,6 +29,16 @@ metadata:
       pattern: null
       min_length: 8
       max_length: 100
+  - field: subdominio
+    label: Subdominio
+    type: string
+    required: true
+    default: ''
+    description: Introduzca el subdominio para acceder a Baserow.
+    validation:
+      pattern: ^[a-z0-9-]+$
+      min_length: null
+      max_length: null
   tags:
   - baserow
 template:
