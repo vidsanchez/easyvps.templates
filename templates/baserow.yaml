@@ -1,7 +1,7 @@
 metadata:
   name: Baserow
   icon: baserow.svg
-  description: Baserow es una herramienta de base de datos sin código, de código abierto, que permite crear y gestionar bases de datos en línea de forma sencilla y colaborativa. Es flexible, integrable con otros programas y ofrece planes gratuitos y de pago según las necesidades del usuario.
+  description: Baserow es una herramienta de base de datos NoCode y open source, que permite crear y gestionar bases de datos en línea de forma sencilla y colaborativa. Es flexible, integrable con otros programas, cómo n8n.
   version: 0.1.0
   category: Base de datos
   dependencies:
@@ -10,21 +10,21 @@ metadata:
   - network_public
   user_fields:
   - field: username
-    label: Usuario
+    label: Username
     type: string
     required: true
-    default: ''
-    description: El nombre de usuario
+    default: 'postgres'
+    description: El usuario para acceder a Postgress
     validation:
       pattern: null
-      min_length: 8
-      max_length: 100
+      min_length: null
+      max_length: null
   - field: password
     label: Password
     type: password
     required: true
     default: ''
-    description: Configuración para password
+    description: El password para acceder a Postgress
     validation:
       pattern: null
       min_length: 8
@@ -33,30 +33,77 @@ metadata:
     label: Subdominio
     type: string
     required: true
-    default: ''
-    description: Introduzca el subdominio para acceder a Baserow.
+    default: 'baserow.midominio.com'
+    description: Introduzca el subdominio que utilizará Baserow.
     validation:
-      pattern: ^[a-z0-9-]+$
+      pattern: ^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$
+      min_length: null
+      max_length: null
+  - field: cpus
+    label: CPUs
+    type: number
+    required: true
+    default: 1
+    description: Número de CPUs a asignar al contenedor.
+    validation:
+      pattern: null
+      min_length: null
+      max_length: null
+  - field: memory
+    label: Memoria
+    type: number
+    required: true
+    default: 1024
+    description: Memoria a asignar al contenedor (en MB).
+    validation:
+      pattern: null
       min_length: null
       max_length: null
   tags:
   - baserow
 template:
-  version: '3.7'
+  version: "3.7"
+
   services:
     baserow:
-      image: luizeof/smtp2http:latest
-      entrypoint:
-      - smtp2http
-      - --user=[[username]]
-      - --pass=[[password]]
-      - --webhook=[[subdominio]]
+      image: baserow/baserow:latest
       networks:
-      - network_public
+        - network_public
+      volumes:
+        - baserow_data:/baserow/data
+      environment:
+        - BASEROW_PUBLIC_URL=[[subdominio]]
+        - DATABASE_HOST=postgres
+        - DATABASE_NAME=baserow_db
+        - DATABASE_USER=[[username]]
+        - DATABASE_PASSWORD=[[password]]
+        - BASEROW_TRIGGER_SYNC_TEMPLATES_AFTER_MIGRATION=false
+        - BASEROW_ROW_PAGE_SIZE_LIMIT=200
+        - BATCH_ROWS_SIZE_LIMIT=200
       deploy:
+        mode: replicated
+        replicas: 1
         placement:
           constraints:
-          - node.role == manager
+            - node.role == manager
+            # - node.hostname == worker1
+        resources:
+          limits:
+            cpus: "[[cpus]]"
+            memory: "[[memory]]"
+        labels:
+          - traefik.enable=true
+          - traefik.http.routers.baserow.rule=Host(`[[subdominio]]`)
+          - traefik.http.routers.baserow.entrypoints=websecure
+          - traefik.http.routers.baserow.tls.certresolver=letsencryptresolver
+          - traefik.http.routers.baserow.service=baserow
+          - traefik.http.services.baserow.loadbalancer.server.port=80
+
+  volumes:
+    baserow_data:
+      external: true
+      name: baserow_data
+
   networks:
     network_public:
       external: true
