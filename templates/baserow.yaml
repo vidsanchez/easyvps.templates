@@ -72,7 +72,7 @@ template:
       volumes:
         - baserow_data:/baserow/data
       environment:
-        - BASEROW_PUBLIC_URL=[[subdominio]]
+        - BASEROW_PUBLIC_URL=https://[[subdominio]]
         - DATABASE_HOST=postgres
         - DATABASE_NAME=baserow_db
         - DATABASE_USER=[[username]]
