@@ -44,11 +44,7 @@ template:
   services:
     smtp2http:
       image: luizeof/smtp2http:latest
-      entrypoint: |
-      smtp2http
-      --user=[[username]]
-      --pass=[[password]]
-      --webhook=[[subdominio]]
+      entrypoint: smtp2http --user=[[username]] --pass=[[password]] --webhook=[[subdominio]]
       networks:
       - network_public
       deploy:
