@@ -1,40 +1,60 @@
 metadata:
   name: n8n normal
   icon: n8n.png
-  description: Plantilla para N8n_normal
+  description: n8n es una plataforma de automatización de flujos de trabajo de código abierto que permite conectar aplicaciones y servicios mediante una interfaz visual basada en nodos, facilitando la creación de procesos personalizados sin necesidad de programación avanzada. Con más de 400 integraciones disponibles, soporte para inteligencia artificial y opciones de autoalojamiento, n8n ofrece a usuarios técnicos y no técnicos una solución flexible y escalable para automatizar tareas repetitivas y mejorar la eficiencia operativa.
   version: 1.0.0
-  category: General
+  category: Automatización
   dependencies:
-  - Postgres
+  - Postgres / Pgvector
   required_networks:
   - network_public
   user_fields:
+  - field: username
+    label: Username
+    type: string
+    required: true
+    default: 'postgres'
+    description: El usuario para acceder a Postgress
+    validation:
+      pattern: null
+      min_length: null
+      max_length: null
   - field: password
     label: Password
     type: password
     required: true
     default: ''
-    description: Configuración para password
+    description: El password para acceder a Postgress
     validation:
       pattern: null
       min_length: 8
       max_length: 100
-  - field: subdominio_editor
-    label: Subdominio_editor
+  - field: subdominio
+    label: Subdominio
     type: string
     required: true
-    default: ''
-    description: Configuración para subdominio_editor
+    default: 'wf.midominio.com'
+    description: Introduzca el subdominio que utilizará n8n.
+    validation:
+      pattern: ^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$
+      min_length: null
+      max_length: null
+  - field: cpus
+    label: CPUs
+    type: number
+    required: true
+    default: 1
+    description: Número de CPUs a asignar al contenedor.
     validation:
       pattern: null
       min_length: null
       max_length: null
-  - field: subdominio_webhook
-    label: Subdominio_webhook
-    type: string
+  - field: memory
+    label: Memoria
+    type: number
     required: true
-    default: ''
-    description: Configuración para subdominio_webhook
+    default: 1024
+    description: Memoria a asignar al contenedor (en MB).
     validation:
       pattern: null
       min_length: null
@@ -43,8 +63,8 @@ metadata:
     label: Timezone
     type: string
     required: true
-    default: ''
-    description: Configuración para timezone
+    default: 'Europe/Madrid'
+    description: Timezone a asignar al contenedor.
     validation:
       pattern: null
       min_length: null
@@ -52,22 +72,55 @@ metadata:
   tags:
   - n8n_normal
 template:
-  version: '3.7'
+  version: "3.7"
+
   services:
-    n8n_normal:
-      image: luizeof/smtp2http:latest
-      entrypoint:
-      - smtp2http
-      - --user=[[username]]
-      - --pass=[[password]]
-      - --webhook=[[subdominio]]
+    n8n_regular:
+      image: n8nio/n8n:latest
+      command: start
       networks:
-      - network_public
+        - network_public
+      environment:
+        - DB_TYPE=postgresdb
+        - DB_POSTGRESDB_DATABASE=n8n_normal_db
+        - DB_POSTGRESDB_HOST=postgres
+        - DB_POSTGRESDB_PORT=5432
+        - DB_POSTGRESDB_USER=postgres
+        - DB_POSTGRESDB_PASSWORD=password
+        - N8N_ENCRYPTION_KEY=password
+        - N8N_HOST=wf.midominio.com
+        - N8N_EDITOR_BASE_URL=https://[[subdominio]]
+        - N8N_PROTOCOL=https
+        - NODE_ENV=production
+        - WEBHOOK_URL=https://[[subdominio]]
+        - EXECUTIONS_MODE=regular
+        - N8N_REINSTALL_MISSING_PACKAGES=true
+        - NODE_FUNCTION_ALLOW_EXTERNAL=lodash
+        - EXECUTIONS_DATA_PRUNE=true
+        - EXECUTIONS_DATA_MAX_AGE=336
+        - GENERIC_TIMEZONE=[[timezone]]
+        - TZ=[[timezone]]
       deploy:
+        mode: replicated
+        replicas: 1
         placement:
           constraints:
-          - node.role == manager
+            - node.role == manager
+        resources:
+          limits:
+            cpus: "[[cpus]]"
+            memory: "[[memory]]M"
+        labels:
+          - traefik.enable=true
+          - traefik.http.routers.n8n_regular.rule=(Host(`[[subdominio]]`))
+          - traefik.http.routers.n8n_regular.entrypoints=websecure
+          - traefik.http.routers.n8n_regular.priority=1
+          - traefik.http.routers.n8n_regular.tls.certresolver=letsencryptresolver
+          - traefik.http.routers.n8n_regular.service=n8n_regular
+          - traefik.http.services.n8n_regular.loadbalancer.server.port=5678
+          - traefik.http.services.n8n_regular.loadbalancer.passHostHeader=1
+
   networks:
     network_public:
-      external: true
       name: network_public
+      external: true
