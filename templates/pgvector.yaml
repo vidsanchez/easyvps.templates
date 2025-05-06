@@ -1,19 +1,29 @@
 metadata:
   name: Pgvector
   icon: postgres.png
-  description: Plantilla para Pgvector
+  description: pgvector es una extensión para la reputada base de datos PostgreSQL, conviertiendola en una vector store, lo que permite almacenar y buscar vectores de similitud, integrando capacidades de búsqueda vectorial directamente en la base de datos relacional. Es ideal para aplicaciones de inteligencia artificial que requieren búsquedas semánticas, como sistemas de recomendación, análisis de texto o recuperación de información basada en embeddings.
   version: 1.0.0
-  category: General
+  category: Base de datos
   dependencies: []
   required_networks:
   - network_public
   user_fields:
+  - field: username
+    label: Username
+    type: string
+    required: true
+    default: 'postgres'
+    description: El usuario para acceder a Postgress
+    validation:
+      pattern: null
+      min_length: null
+      max_length: null
   - field: password
     label: Password
     type: password
     required: true
     default: ''
-    description: Configuración para password
+    description: El password para acceder a Postgress
     validation:
       pattern: null
       min_length: 8
@@ -22,20 +32,34 @@ metadata:
   - pgvector
 template:
   version: '3.7'
+
   services:
     pgvector:
-      image: luizeof/smtp2http:latest
-      entrypoint:
-      - smtp2http
-      - --user=[[username]]
-      - --pass=[[password]]
-      - --webhook=[[subdominio]]
+      image: pgvector/pgvector:pg16
       networks:
-      - network_public
+        - network_public
+      environment:
+        - PGUSER=[[username]]
+        - POSTGRES_PASSWORD=[[password]]
+        - PGDATA=/var/lib/postgresql/data/pgdata
+      volumes:
+        - pgvector_data:/var/lib/postgresql/data
       deploy:
+        mode: replicated
+        replicas: 1
         placement:
           constraints:
-          - node.role == manager
+            - node.role == manager
+        resources:
+          limits:
+            cpus: "1"
+            memory: "1024M"
+
+  volumes:
+    pgvector_data:
+      external: true
+      name: pgvector_data
+
   networks:
     network_public:
       external: true
