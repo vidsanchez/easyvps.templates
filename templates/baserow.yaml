@@ -90,7 +90,7 @@ template:
         resources:
           limits:
             cpus: "[[cpus]]"
-            memory: [[memory]]M
+            memory: "[[memory]]M"
         labels:
           - traefik.enable=true
           - traefik.http.routers.baserow.rule=Host(`[[subdominio]]`)
