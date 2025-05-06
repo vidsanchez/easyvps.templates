@@ -28,13 +28,33 @@ metadata:
       pattern: null
       min_length: 8
       max_length: 100
+  - field: cpus
+    label: CPUs
+    type: number
+    required: true
+    default: 1
+    description: Número de CPUs a asignar al contenedor.
+    validation:
+      pattern: null
+      min_length: null
+      max_length: null
+  - field: memory
+    label: Memoria
+    type: number
+    required: true
+    default: 1024
+    description: Memoria a asignar al contenedor (en MB).
+    validation:
+      pattern: null
+      min_length: null
+      max_length: null
   tags:
   - pgvector
 template:
   version: '3.7'
 
   services:
-    pgvector:
+    postgres:
       image: pgvector/pgvector:pg16
       networks:
         - network_public
